@@ -21,15 +21,16 @@ public class Trybank
     }
 
     // 1. Construa a funcionalidade de cadastrar novas contas
-    public void RegisterAccount(int number, int agency, int pass)
+    public void RegisterAccount(int number, int agency, int pass) 
+    {
+        for (int index = 0; index < registeredAccounts; index += 1) 
         {
-            for (int index = 0; index < registeredAccounts; index += 1)
+
+            if (Bank[index, 0] == number && Bank[index, 1] == agency) 
             {
-                if (Bank[index, 0] == number && Bank[index, 1] == agency)
-                {
-                    throw new ArgumentException("A conta já está sendo usada!");
-                }
+                throw new ArgumentException("A conta já está sendo usada!");
             }
+        }
 
             Bank[registeredAccounts, 0] = number;
             Bank[registeredAccounts, 1] = agency;
@@ -37,12 +38,44 @@ public class Trybank
             Bank[registeredAccounts, 3] = 0;
 
             registeredAccounts += 1;
-        }
+    }
 
     // 2. Construa a funcionalidade de fazer Login
     public void Login(int number, int agency, int pass)
     {
-        throw new NotImplementedException();
+        if (Logged) 
+        {
+            throw new AccessViolationException("Usuário já está logado");
+        }
+
+        int userIndex = -1;
+
+        for (int index = 0; index < registeredAccounts; index += 1) 
+        {
+            if (Bank[index, 0] == number && Bank[index, 1] == agency) 
+            {
+                userIndex = index;
+                break;
+            }
+        }
+
+        if (userIndex != -1) 
+        {
+            if (Bank[userIndex, 2] == pass) 
+            {
+                Logged = true;
+                loggedUser = userIndex;
+            } 
+            else 
+            {
+                throw new ArgumentException("Senha incorreta");
+            }
+
+        }
+        else
+        {
+            throw new ArgumentException("Agência + Conta não encontrada");
+        }
     }
 
     // 3. Construa a funcionalidade de fazer Logout
